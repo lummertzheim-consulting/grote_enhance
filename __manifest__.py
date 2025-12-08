@@ -2,14 +2,14 @@
 
 {
     'name': 'Grote Enhance',
-    'version': '18.0.1.0.1',
+    'version': '18.0.1.0.2',
     'author': 'Fletscher',
     'category': 'Extra tools',
     'summary': 'Sales Manufacturing and project model changes',
     'description': 'This Module has Sales Manufacturing and project changes',
     'support': 'felix@fletscher.de',
     'website': 'https://www.fletscher.de',
-    'depends': ['base', 'web', 'mrp', 'sale_management', 'project', 'hr_timesheet', 'portal', 'documents'],
+    'depends': ['base', 'web', 'mrp', 'sale_management', 'project', 'hr_timesheet', 'hr_holidays', 'portal', 'documents'],
     "data": [
         "security/ir.model.access.csv",
         "security/ir.model.security.xml",
