@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_task_form2" model="ir.ui.view">
+            <field name="name">project.task.view.form.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/group[2]" position="inside">
+                    <field name="kw" />
+                </xpath>
+                <xpath expr="//group/group[1]" position="inside">
+                    <field name="task_employee_capacity" nolabel="1">
+                        <list editable="bottom">
+                            <field name="task_id" column_invisible="1"/>
+                            <field name="tag_id" required="1" options="{'no_quick_create': True, 'no_create': True, 'no_open': True}"
+                                   domain="[('id', 'in', parent.tag_ids)]"/>
+                            <field name="hours" widget="float_time" sum="Total Hours"/>
+                            <field name="kw" />
+                            <button name="action_check_with_kw" type="object" string="KW"/>
+                        </list>
+                    </field>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

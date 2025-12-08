@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- View project.task.type list -->
+    <record id="task_type_tree" model="ir.ui.view">
+        <field name="name">view.project.task.type.list</field>
+        <field name="model">project.task.type</field>
+        <field name="inherit_id" ref="project.task_type_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="is_visible_portal_user" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

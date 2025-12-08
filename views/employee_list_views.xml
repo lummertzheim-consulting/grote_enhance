@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_utilization_tree" model="ir.ui.view">
+        <field name="name">hr.employee.view.tree</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <list edit="0" create="0" delete="0">
+                <field name="name" />
+                <field name="planned_capacity_min_one" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_current" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_1" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_2" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_3" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_4" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_5" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_6" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_7" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_8" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_9" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                <field name="planned_capacity_pluse_10" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+
+    <record id="employee_utilization_action" model="ir.actions.act_window">
+        <field name="name">Auslastungsplan</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_id" ref="grote_enhance.view_employee_utilization_tree"/>
+        <field name="view_mode">list</field>
+        <field name="context">{'from_utilization': 1}</field>
+    </record>
+
+
+    <menuitem id="menu_employee_utilization" name="Auslastungsplan" parent="hr.menu_hr_employee_payroll"
+          action="employee_utilization_action" sequence="4"/>
+
+</odoo>

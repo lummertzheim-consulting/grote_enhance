@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="project_tags_tree_view" model="ir.ui.view">
+            <field name="name">project.tags.view.tree.inherit</field>
+            <field name="model">project.tags</field>
+            <field name="inherit_id" ref="project.project_tags_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="employee_id" options="{'no_quick_create': True, 'no_create': True, 'no_open': True}"/>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

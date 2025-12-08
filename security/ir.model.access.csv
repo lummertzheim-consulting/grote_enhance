@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_task_employee_capacity,task.employee.capacity,model_task_employee_capacity,,1,1,1,1
+access_hr_employee_portal,hr.employee.portal,hr.model_hr_employee,base.group_portal,1,0,0,0
+access_res_partner_portal,res.partner.portal,base.model_res_partner,base.group_portal,1,0,0,0
+access_hr_holidays_status_portal,hr.holidays.status.portal.user,hr_holidays.model_hr_leave_type,base.group_portal,1,0,0,0
