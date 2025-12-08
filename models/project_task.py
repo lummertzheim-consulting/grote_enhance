@@ -45,7 +45,7 @@ class ProjectTask(models.Model):
                 [('task_id', '=', self.id), ('tag_id', 'in', self.tag_ids.ids), ('hours', '=', 0)])
             if total_hours < self.allocated_hours and task_employee_zero_capacity_ids:
                 remaining_hrs = self.allocated_hours - total_hours
-                per_line_remaining_hrs = remaining_hrs / len(task_employee_zero_capacity_ids) or 1
+                per_line_remaining_hrs = remaining_hrs / (len(task_employee_zero_capacity_ids) or 1)
                 task_employee_zero_capacity_ids.write({'hours': per_line_remaining_hrs})
 
 
@@ -100,7 +100,7 @@ class TaskEmployeeCapacity(models.Model):
                 kw, year = get_iso_year_and_week_offset(today, week_offset)
                 task_capacity_ids = self.search([
                     ('tag_id.employee_id', '=', self.tag_id.employee_id.id),
-                    ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                    ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                     # ('task_id', '!=', self.task_id.id),
                     ('task_id.kw', '=', kw)
                 ])

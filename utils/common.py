@@ -19,7 +19,7 @@ def get_week_dates(week_name, year=None):
     year: int, defaults to current year
     """
     if not year:
-        year = datetime.date.today().year
+        year = date.today().year
 
     week_number = int(week_name.replace('KW', ''))
     

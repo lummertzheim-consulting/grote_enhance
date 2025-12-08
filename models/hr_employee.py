@@ -22,7 +22,7 @@ class HrEmployee(models.Model):
     def _compute_on_working_time(self):
         for rec in self:
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', rec.kw)])
             rec.planned_working_time_week = sum(task_capacity_ids.mapped('hours'))
 
@@ -74,7 +74,7 @@ class HrEmployee(models.Model):
         for rec in self:
             task_timesheet_ids = self.env['account.analytic.line'].search([('employee_id', '=', rec.id),
                                                                            ('task_id', '!=', False),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', rec.kw)])
             rec.actual_working_hours_week = sum(task_timesheet_ids.mapped('unit_amount'))
 

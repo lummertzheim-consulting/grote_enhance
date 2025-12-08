@@ -27,7 +27,7 @@ class HrEmployee(models.Model):
             # Get ISO week number from the target date
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
             rec.planned_capacity_min_one = (
@@ -38,7 +38,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=0)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -50,7 +50,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=1)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -62,7 +62,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=2)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -75,7 +75,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=3)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -87,7 +87,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=4)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -99,7 +99,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=5)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -111,7 +111,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=6)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -123,7 +123,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=7)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -135,7 +135,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=8)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -147,7 +147,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=9)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
@@ -159,7 +159,7 @@ class HrEmployee(models.Model):
             target_date = today + timedelta(weeks=10)
             iso_week = target_date.isocalendar().week
             task_capacity_ids = self.env['task.employee.capacity'].search([('tag_id.employee_id', '=', rec.id),
-                                                                           ('task_id.stage_id', '!=', 'Abgeschlossen'),
+                                                                           ('task_id.stage_id.name', '!=', 'Abgeschlossen'),
                                                                            ('task_id.kw', '=', iso_week)])
             planned_working_time_week = sum(task_capacity_ids.mapped('hours')) + total_leaves
 
