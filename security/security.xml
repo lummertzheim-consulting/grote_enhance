@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Step 1: Make noupdate = False temporarily -->
+    <function model="ir.model.data" name="write">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal')]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <!-- Step 2: Overwrite the record (same external ID) -->
+    <record id="project.project_task_rule_portal" model="ir.rule">
+        <field name="domain_force">[
+            ('project_id.privacy_visibility', '=', 'portal'),
+            ('active', '=', True),
+            ('tag_ids.employee_id.user_id', '=', user.id),
+            '|',
+                ('message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
+                ('project_id.collaborator_ids', 'any', [
+                    ('partner_id', '=', user.partner_id.id),
+                    ('limited_access', '=', False),
+                ]),
+        ]</field>
+    </record>
+
+    <!-- Step 3: Restore noupdate = True -->
+    <function model="ir.model.data" name="write">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal')]"/>
+        </function>
+        <value eval="{'noupdate': True}"/>
+    </function>
+
+    
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal_project_sharing')]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <!-- Step 2: Overwrite the record (same external ID) -->
+    <record id="project.project_task_rule_portal_project_sharing" model="ir.rule">
+        <field name="domain_force">[
+            ('project_id.privacy_visibility', '=', 'portal'),
+            ('active', '=', True),
+            ('tag_ids.employee_id.user_id', '=', user.id),
+            '|',
+                ('message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
+                ('project_id.collaborator_ids', 'any', [
+                    ('partner_id', '=', user.partner_id.id),
+                    ('limited_access', '=', False),
+                ]),
+        ]</field>
+    </record>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal_project_sharing')]"/>
+        </function>
+        <value eval="{'noupdate': True}"/>
+    </function>
+
+    
+
+
+</odoo>

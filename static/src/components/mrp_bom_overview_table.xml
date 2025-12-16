@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="grote_enhance.BomOverviewTableInherit" t-inherit="mrp.BomOverviewTable" t-inherit-mode="extension">
+        <xpath expr="//thead/tr/th[contains(text(),'Route')]" position="after">
+            <th class="text-end" title="Sale Price of the product.">Sale Price</th>
+        </xpath>
+        <xpath expr="//tfoot/tr/td[@t-if='showLeadTimes'][2]" position="after">
+           <td class="text-end">
+                <span t-if="data.hasOwnProperty('total_sale_price')" t-esc="formatMonetary(data.total_sale_price)"/>
+           </td>
+        </xpath>
+
+    </t>
+
+    <t t-name="grote_enhance.BomOverviewLineInherit" t-inherit="mrp.BomOverviewLine" t-inherit-mode="extension">
+        <xpath expr="//td[@t-if='showLeadTimes'][2]" position="after">
+           <td class="text-end">
+                <span t-if="data.hasOwnProperty('sale_price')" t-esc="formatMonetary(data.sale_price)"/>
+           </td>
+        </xpath>
+    </t>
+</templates>

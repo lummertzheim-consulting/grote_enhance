@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Step 1: Make noupdate = False temporarily -->
+    <function model="ir.model.data" name="write">
+        <value model="ir.model.data"
+               search="[('module', '=', 'hr_timesheet'), ('name', '=', 'access_account_analytic_line_portal_user')]"/>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <!-- Step 2: Overwrite the record (same external ID) -->
+    <record id="access_account_analytic_line_portal_user" model="ir.model.access">
+        <field name="name">account.analytic.line portal access</field>
+        <field name="model_id" ref="hr_timesheet.model_account_analytic_line"/>
+        <field name="group_id" ref="base.group_portal"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <!-- Step 3: Restore noupdate = True -->
+    <function model="ir.model.data" name="write">
+        <value model="ir.model.data"
+               search="[('module', '=', 'hr_timesheet'), ('name', '=', 'access_account_analytic_line_portal_user')]"/>
+        <value eval="{'noupdate': True}"/>
+    </function>
+
+
+    <record model="ir.rule" id="res_partner_portal_public_rule">
+        <field name="name">res_partner: portal: read access on my commercial partner</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[Command.link(ref('base.group_portal'))]"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_write" eval="False"/>
+    </record>
+
+</odoo>

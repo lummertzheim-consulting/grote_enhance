@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_employee_tree" model="ir.ui.view">
+            <field name="name">hr.employee.view.tree.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='country_id']" position="after">
+                    <field name="kw" />
+                    <field name="target_work_hours_week" widget="float_time" optional="show"/>
+                    <field name="planned_working_time_week" widget="float_time" optional="show"/>
+                    <field name="planned_capacity" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                    <field name="absence_week" widget="float_time" optional="show"/>
+                    <field name="actual_working_hours_week" widget="float_time" optional="show"/>
+                    <field name="actual_working_capacity" widget="project_task_progressbar" options="{'overflow_class': 'bg-danger'}" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_employee_form" model="ir.ui.view">
+            <field name="name">hr.employee.view.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='active_group']//field[@name='user_id']" position="attributes">
+                    <attribute name="domain">[('company_ids', 'in', company_id)]</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+    <!-- Action for Action Menu -->
+        <record id="action_for_update_kw_next_week" model="ir.actions.server">
+            <field name="name">Update to Current Week</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="binding_model_id" ref="hr.model_hr_employee"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    for record in records:
+                        action = record.action_update_next_week(week=0)
+            </field>
+        </record>
+        <record id="action_for_update_kw_current_next_week" model="ir.actions.server">
+            <field name="name">Update to Current + Next 1 Week</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="binding_model_id" ref="hr.model_hr_employee"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    for record in records:
+                        action = record.action_update_next_week(week=1)
+            </field>
+        </record>
+        <record id="action_for_update_kw_current_next_2_week" model="ir.actions.server">
+            <field name="name">Update to Current + Next 2 Week</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="binding_model_id" ref="hr.model_hr_employee"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    for record in records:
+                        action = record.action_update_next_week(week=2)
+            </field>
+        </record>
+    </data>
+</odoo>

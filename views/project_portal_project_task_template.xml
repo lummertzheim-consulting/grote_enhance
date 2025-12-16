@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="grote_enhance_portal_tasks_list" inherit_id="project.portal_tasks_list">
+        <xpath expr="//th[3]" position="replace"/>
+        <xpath expr="//th[2]" position="after">
+            <th></th>
+            <th>Kurzb.</th>
+        </xpath>
+        <xpath expr="//th" position="before">
+            <t t-set="grouped_tasks_colspan" t-value="12"/>
+        </xpath>
+
+        <xpath expr="//t[@t-foreach='tasks']//tr/td[4]" position="replace" />
+        <xpath expr="//t[@t-foreach='tasks']//tr/td[3]" position="after" >
+            <td>
+                <button class="btn" data-bs-toggle="modal" t-att-data-bs-target="'#activityModal' + str(task.id)">
+                    <i class="fa fa-clock-o"></i>
+                </button>
+                <div class="modal fade" t-att-id="'activityModal' + str(task.id)" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Zeiterfassung</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" t-att-action="'/my/task/' + str(task.id) + '/add_activity'">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            geplante Zeit: <span t-esc="('%.2f' % (task.allocated_hours or 0.0))"/>h
+                                        </label>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            bereits erfasste Zeit: <span t-esc="('%.2f' % (task.effective_hours or 0.0))"/>h
+                                        </label>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Menge:</label>
+                                        <input type="number" class="form-control" name="time_spent"
+                                               t-att-value="0"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Beschreibung:</label>
+                                        <textarea class="form-control" name="description"></textarea>
+                                    </div>
+
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Speichern</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" title="Chat" data-bs-toggle="modal" t-att-data-bs-target="'#chatModal' + str(task.id)">
+                    <i class="fa fa-comments"></i>
+                </button>
+
+
+                <!-- Activity Modal -->
+                <div class="modal fade" t-att-id="'chatModal' + str(task.id)" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Chat</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <t t-call="portal.message_thread">
+                                    <t t-set="object" t-value="task"/>
+                                    <t t-set="token" t-value="task.access_token"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </td>
+            <td>
+                <t t-set="kurzbezeichnung" t-value="task.sudo().project_id.reinvoiced_sale_order_id and task.sudo().project_id.reinvoiced_sale_order_id.x_studio_kurzbezeichnung"/>
+                <div t-if="kurzbezeichnung" class="flex-nowrap ps-3">
+                    <span t-att-title="kurzbezeichnung" t-esc="kurzbezeichnung"/>
+                </div>
+            </td>
+        </xpath>
+
+    </template>
+
+    <template id="portal_my_tasks_state_widget_template" name="Status Widget Template" inherit_id="project.portal_my_tasks_state_widget_template">
+        <xpath expr="//span" position="replace">
+            <div class="dropdown position-static">
+                <!-- Badge Showing Current State -->
+                <span class="badge rounded-pill dropdown-toggle"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    t-att-title="dict(task.fields_get(allfields=['state'])['state']['selection'])[task.state]"
+                    t-attf-class="badge rounded-pill dropdown-toggle 
+                        #{'text-bg-success' if task.state == '1_done' else
+                            'text-bg-danger' if task.state == '1_canceled' else
+                            'text-bg-warning' if task.state == '02_changes_requested' else
+                            'text-bg-success' if task.state == '03_approved' else
+                            'text-bg-secondary'}">
+                    <t t-esc="dict(task.fields_get(allfields=['state'])['state']['selection'])[task.state]"/>
+                </span>
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li>
+                        <a href="#" class="dropdown-item change-task-state"
+                        t-att-data-task-id="task.id"
+                        data-new-state="01_in_progress">
+                            <span class="fa fa-exclamation-circle text-secondary me-2"></span>
+                            <span class="text-secondary">In Bearbeitung</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-item change-task-state"
+                        t-att-data-task-id="task.id"
+                        data-new-state="02_changes_requested">
+                            <span class="fa fa-exclamation-circle text-warning me-2"></span>
+                            <span class="text-warning">Rückfrage</span>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"/></li>
+                    <li>
+                        <a href="#" class="dropdown-item change-task-state"
+                        t-att-data-task-id="task.id"
+                        data-new-state="1_done">
+                            <span class="fa fa-check text-success me-2"></span>
+                            <span class="text-success">Erledigt</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        
+            <!-- <span
+                t-att-title="dict(task.fields_get(allfields=['state'])['state']['selection'])[task.state]"
+                t-attf-class="#{'badge rounded-pill fa' if task.state in ['1_done','1_canceled','04_waiting_normal'] else 'badge rounded-pill text-bg-secondary' } #{'fa-check-circle text-bg-success' if task.state == '1_done' else 'fa-times-circle text-bg-danger' if task.state == '1_canceled' else 'text-bg-warning' if task.state == '02_changes_requested' else 'text-bg-success' if task.state == '03_approved' else 'text-bg-hourglass-o' if task.state == '04_waiting_normal' else ''}"
+            ><t t-esc="dict(task.fields_get(allfields=['state'])['state']['selection'])[task.state]"/></span> -->
+        </xpath>
+    </template>
+
+</odoo>
