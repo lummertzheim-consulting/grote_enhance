@@ -331,7 +331,7 @@ class PortalTaskActivity(CustomerPortal):
         return request.redirect('/my/tasks')
 
 
-    @http.route('/portal/task/<int:task_id>/change_state', type='json', auth='user', methods=['POST'], website=True)
+    @http.route('/portal/task/<int:task_id>/change_state', type='jsonrpc', auth='user', methods=['POST'], website=True)
     def portal_change_task_state(self, task_id, new_state):
         """Portal endpoint to update a task state"""
         task = request.env['project.task'].sudo().browse(task_id)

@@ -2,8 +2,7 @@
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError, AccessError, ValidationError
-from odoo.osv import expression
-from odoo.tools import format_list
+from odoo.tools import expression, format_list
 from odoo.tools.translate import _
 from odoo.addons.hr_timesheet.models.hr_timesheet import AccountAnalyticLine as AccountAnalyticLineExt
 from datetime import datetime
