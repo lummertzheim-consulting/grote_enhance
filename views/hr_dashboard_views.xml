@@ -19,7 +19,7 @@
                     <field name="overtime_balance"/>
                     <field name="vacation_days_remaining"/>
                     <templates>
-                        <t t-name="kanban-box">
+                        <t t-name="card">
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click #{record.is_absent.raw_value ? 'o_employee_absent border-danger' : 'o_employee_present border-success'}">
                                 <div class="o_kanban_image">
                                     <img t-att-src="kanban_image('hr.employee', 'avatar_128', record.id.raw_value)" 
