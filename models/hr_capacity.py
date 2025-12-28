@@ -114,6 +114,23 @@ class HrEmployeeCapacity(models.Model):
         compute='_compute_vacation_days'
     )
 
+    # Wochenauslastung (für Kanban-Balkendiagramm)
+    workload_last_week = fields.Float(
+        string='Auslastung letzte Woche (%)',
+        compute='_compute_weekly_workload',
+        help='Auslastung der letzten Woche in Prozent'
+    )
+    workload_this_week = fields.Float(
+        string='Auslastung diese Woche (%)',
+        compute='_compute_weekly_workload',
+        help='Auslastung der aktuellen Woche in Prozent'
+    )
+    workload_next_week = fields.Float(
+        string='Auslastung nächste Woche (%)',
+        compute='_compute_weekly_workload',
+        help='Geplante Auslastung der nächsten Woche in Prozent'
+    )
+
     # Erfolgsliste / Leistungskonto
     assigned_hours_total = fields.Float(
         string='Zugewiesene Stunden (Gesamt)',
@@ -196,6 +213,82 @@ class HrEmployeeCapacity(models.Model):
             total_work_hours += (end - start).total_seconds() / 3600.0
         
         return total_work_hours
+
+    def _compute_weekly_workload(self):
+        """Berechnet die Auslastung für letzte, diese und nächste Woche"""
+        import pytz
+        today = date.today()
+        
+        # Wochenstart berechnen (Montag)
+        days_since_monday = today.weekday()
+        this_week_start = today - timedelta(days=days_since_monday)
+        last_week_start = this_week_start - timedelta(days=7)
+        next_week_start = this_week_start + timedelta(days=7)
+        
+        for employee in self:
+            # Soll-Stunden pro Woche
+            weekly_target = employee.daily_target_hours * 5  # 5 Arbeitstage
+            if weekly_target <= 0:
+                weekly_target = 38.75  # Fallback
+            
+            # Letzte Woche: tatsächliche Arbeitsstunden aus Zeiterfassung
+            last_week_hours = self._get_worked_hours_week(employee, last_week_start)
+            employee.workload_last_week = min((last_week_hours / weekly_target) * 100, 150)
+            
+            # Diese Woche: Mix aus erfassten Stunden + geplanten Aufgaben
+            this_week_hours = self._get_worked_hours_week(employee, this_week_start)
+            this_week_planned = self._get_planned_hours_week(employee, this_week_start)
+            # Für diese Woche nehmen wir die höhere Zahl (Ist oder Plan)
+            this_week_total = max(this_week_hours, this_week_planned)
+            employee.workload_this_week = min((this_week_total / weekly_target) * 100, 150)
+            
+            # Nächste Woche: nur geplante Stunden aus Aufgaben
+            next_week_planned = self._get_planned_hours_week(employee, next_week_start)
+            employee.workload_next_week = min((next_week_planned / weekly_target) * 100, 150)
+
+    def _get_worked_hours_week(self, employee, week_start):
+        """Holt die tatsächlich gearbeiteten Stunden einer Woche"""
+        week_end = week_start + timedelta(days=6)
+        
+        # Aus Zeiterfassung (Timesheets)
+        timesheets = self.env['account.analytic.line'].search([
+            ('employee_id', '=', employee.id),
+            ('date', '>=', week_start),
+            ('date', '<=', week_end),
+        ])
+        timesheet_hours = sum(timesheets.mapped('unit_amount'))
+        
+        # Alternativ aus Anwesenheit (Attendances)
+        attendances = self.env['hr.attendance'].search([
+            ('employee_id', '=', employee.id),
+            ('check_in', '>=', datetime.combine(week_start, datetime.min.time())),
+            ('check_in', '<=', datetime.combine(week_end, datetime.max.time())),
+        ])
+        attendance_hours = sum(attendances.mapped('worked_hours'))
+        
+        # Nehme den höheren Wert (manche erfassen nur Timesheets, andere Attendance)
+        return max(timesheet_hours, attendance_hours)
+
+    def _get_planned_hours_week(self, employee, week_start):
+        """Holt die geplanten Stunden aus Aufgaben für eine Woche"""
+        week_end = week_start + timedelta(days=6)
+        
+        # Aufgaben die in dieser Woche geplant sind
+        tasks = self.env['project.task'].search([
+            ('user_ids', 'in', [employee.user_id.id]),
+            '|',
+            '&', ('date_deadline', '>=', week_start), ('date_deadline', '<=', week_end),
+            '&', ('planned_date_begin', '>=', week_start), ('planned_date_begin', '<=', week_end),
+        ])
+        
+        # Geplante Stunden summieren
+        planned_hours = sum(tasks.mapped('planned_hours'))
+        
+        # Falls keine geplanten Stunden, Durchschnitt schätzen
+        if planned_hours == 0 and tasks:
+            planned_hours = len(tasks) * 4  # 4 Stunden pro Aufgabe als Schätzung
+        
+        return planned_hours
 
     def _compute_vacation_days(self):
         """Berechnet genommene und verbleibende Urlaubstage"""
