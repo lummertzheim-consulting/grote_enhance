@@ -48,44 +48,43 @@
                                         <i class="fa fa-check-circle"/> Anwesend
                                     </div>
                                     <footer class="mt-2">
-                                        <!-- Badges für Überstunden und Urlaub -->
-                                        <div class="d-flex gap-1 mb-2">
-                                            <span class="badge text-bg-info">
-                                                <i class="fa fa-clock-o"/> 
-                                                <field name="overtime_balance" widget="float_time"/>
-                                            </span>
-                                            <span class="badge text-bg-warning">
-                                                <i class="fa fa-calendar"/> 
-                                                <field name="vacation_days_remaining"/> Tage
-                                            </span>
-                                        </div>
-                                        <!-- Auslastungs-Balkendiagramm -->
-                                        <div class="d-flex align-items-end gap-1" style="height: 35px;" title="Auslastung: Letzte Woche | Diese Woche | Nächste Woche">
-                                            <!-- Letzte Woche -->
-                                            <div class="d-flex flex-column align-items-center" style="width: 20px;">
-                                                <div t-attf-style="height: #{Math.min(record.workload_last_week.raw_value * 0.3, 30)}px; width: 14px; background-color: #6c757d;" 
-                                                     class="rounded-top" 
-                                                     t-att-title="'Letzte Woche: ' + Math.round(record.workload_last_week.raw_value) + '%'"/>
-                                                <span class="text-muted" style="font-size: 8px;">LW</span>
+                                        <!-- Badges und Balkendiagramm in einer Zeile -->
+                                        <div class="d-flex justify-content-between align-items-end">
+                                            <!-- Links: Überstunden und Urlaub -->
+                                            <div class="d-flex flex-column gap-1">
+                                                <span class="badge text-bg-info">
+                                                    <i class="fa fa-clock-o"/> 
+                                                    <field name="overtime_balance" widget="float_time"/>
+                                                </span>
+                                                <span class="badge text-bg-warning">
+                                                    <i class="fa fa-calendar"/> 
+                                                    <field name="vacation_days_remaining"/> Tage
+                                                </span>
                                             </div>
-                                            <!-- Diese Woche -->
-                                            <div class="d-flex flex-column align-items-center" style="width: 20px;">
-                                                <div t-attf-style="height: #{Math.min(record.workload_this_week.raw_value * 0.3, 30)}px; width: 14px; background-color: #{record.workload_this_week.raw_value > 100 ? '#dc3545' : record.workload_this_week.raw_value > 80 ? '#ffc107' : '#198754'};" 
-                                                     class="rounded-top"
-                                                     t-att-title="'Diese Woche: ' + Math.round(record.workload_this_week.raw_value) + '%'"/>
-                                                <span class="text-muted" style="font-size: 8px;">DW</span>
+                                            <!-- Rechts: Auslastungs-Balkendiagramm -->
+                                            <div class="d-flex align-items-end gap-1" style="height: 40px;" title="Auslastung: Letzte Woche | Diese Woche | Nächste Woche">
+                                                <!-- Letzte Woche -->
+                                                <div class="d-flex flex-column align-items-center" style="width: 18px;">
+                                                    <div t-attf-style="height: #{Math.max(Math.min(record.workload_last_week.raw_value * 0.35, 32), 3)}px; width: 12px; background-color: #6c757d;" 
+                                                         class="rounded-top" 
+                                                         t-att-title="'Letzte Woche: ' + Math.round(record.workload_last_week.raw_value) + '%'"/>
+                                                    <span class="text-muted" style="font-size: 7px;">LW</span>
+                                                </div>
+                                                <!-- Diese Woche -->
+                                                <div class="d-flex flex-column align-items-center" style="width: 18px;">
+                                                    <div t-attf-style="height: #{Math.max(Math.min(record.workload_this_week.raw_value * 0.35, 32), 3)}px; width: 12px; background-color: #{record.workload_this_week.raw_value > 100 ? '#dc3545' : record.workload_this_week.raw_value > 80 ? '#ffc107' : '#198754'};" 
+                                                         class="rounded-top"
+                                                         t-att-title="'Diese Woche: ' + Math.round(record.workload_this_week.raw_value) + '%'"/>
+                                                    <span class="text-muted" style="font-size: 7px;">DW</span>
+                                                </div>
+                                                <!-- Nächste Woche -->
+                                                <div class="d-flex flex-column align-items-center" style="width: 18px;">
+                                                    <div t-attf-style="height: #{Math.max(Math.min(record.workload_next_week.raw_value * 0.35, 32), 3)}px; width: 12px; background-color: #{record.workload_next_week.raw_value > 100 ? '#dc3545' : record.workload_next_week.raw_value > 80 ? '#0d6efd' : '#0dcaf0'};" 
+                                                         class="rounded-top"
+                                                         t-att-title="'Nächste Woche: ' + Math.round(record.workload_next_week.raw_value) + '%'"/>
+                                                    <span class="text-muted" style="font-size: 7px;">NW</span>
+                                                </div>
                                             </div>
-                                            <!-- Nächste Woche -->
-                                            <div class="d-flex flex-column align-items-center" style="width: 20px;">
-                                                <div t-attf-style="height: #{Math.min(record.workload_next_week.raw_value * 0.3, 30)}px; width: 14px; background-color: #{record.workload_next_week.raw_value > 100 ? '#dc3545' : record.workload_next_week.raw_value > 80 ? '#0d6efd' : '#0dcaf0'};" 
-                                                     class="rounded-top"
-                                                     t-att-title="'Nächste Woche: ' + Math.round(record.workload_next_week.raw_value) + '%'"/>
-                                                <span class="text-muted" style="font-size: 8px;">NW</span>
-                                            </div>
-                                            <!-- Prozent-Anzeige -->
-                                            <span class="ms-1 text-muted" style="font-size: 10px; line-height: 1;">
-                                                <t t-out="Math.round(record.workload_this_week.raw_value)"/>%
-                                            </span>
                                         </div>
                                     </footer>
                                 </main>
