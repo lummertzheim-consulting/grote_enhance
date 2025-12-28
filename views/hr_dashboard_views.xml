@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Dashboard Kanban View für Anwesenheitsübersicht -->
+        <record id="hr_employee_dashboard_kanban" model="ir.ui.view">
+            <field name="name">hr.employee.dashboard.kanban</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <kanban class="o_hr_employee_dashboard">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="job_title"/>
+                    <field name="department_id"/>
+                    <field name="is_absent"/>
+                    <field name="leave_date_from"/>
+                    <field name="leave_date_to"/>
+                    <field name="current_leave_id"/>
+                    <field name="department_type"/>
+                    <field name="overtime_balance"/>
+                    <field name="vacation_days_remaining"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click #{record.is_absent.raw_value ? 'o_employee_absent border-danger' : 'o_employee_present border-success'}">
+                                <div class="o_kanban_image">
+                                    <img t-att-src="kanban_image('hr.employee', 'avatar_128', record.id.raw_value)" 
+                                         alt="Mitarbeiterbild" 
+                                         class="o_image_64_cover"/>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <div class="o_kanban_record_title">
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="o_kanban_record_subtitle">
+                                        <field name="job_title"/>
+                                    </div>
+                                    <div class="text-muted">
+                                        <field name="department_id"/>
+                                    </div>
+                                    <div t-if="record.is_absent.raw_value" class="text-danger mt-2">
+                                        <i class="fa fa-plane"/> Abwesend
+                                        <div class="small">
+                                            <field name="current_leave_id"/>
+                                        </div>
+                                    </div>
+                                    <div t-else="" class="text-success mt-2">
+                                        <i class="fa fa-check-circle"/> Anwesend
+                                    </div>
+                                    <div class="mt-2 small">
+                                        <span class="badge bg-info me-1">
+                                            <i class="fa fa-clock-o"/> 
+                                            Überstunden: <field name="overtime_balance" widget="float_time"/>
+                                        </span>
+                                        <span class="badge bg-warning">
+                                            <i class="fa fa-calendar"/> 
+                                            Urlaub: <field name="vacation_days_remaining"/> Tage
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Dashboard Tree View -->
+        <record id="hr_employee_dashboard_tree" model="ir.ui.view">
+            <field name="name">hr.employee.dashboard.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="is_absent == True" decoration-success="is_absent == False">
+                    <field name="name"/>
+                    <field name="job_title"/>
+                    <field name="department_id"/>
+                    <field name="department_type"/>
+                    <field name="is_absent"/>
+                    <field name="current_leave_id"/>
+                    <field name="overtime_balance" widget="float_time"/>
+                    <field name="vacation_days_remaining"/>
+                    <field name="completion_rate" widget="progressbar"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Suchansicht für Dashboard -->
+        <record id="hr_employee_dashboard_search" model="ir.ui.view">
+            <field name="name">hr.employee.dashboard.search</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="department_type"/>
+                    <filter name="present" string="Anwesend" domain="[('is_absent', '=', False)]"/>
+                    <filter name="absent" string="Abwesend" domain="[('is_absent', '=', True)]"/>
+                    <separator/>
+                    <filter name="maschinenbau" string="Maschinenbau" domain="[('department_type', '=', 'maschinenbau')]"/>
+                    <filter name="kleingeraete" string="Kleingeräte" domain="[('department_type', '=', 'kleingeraete')]"/>
+                    <separator/>
+                    <filter name="apprentices" string="Auszubildende" domain="[('is_apprentice', '=', True)]"/>
+                    <group expand="0" string="Gruppieren nach">
+                        <filter name="group_department" string="Abteilung" context="{'group_by': 'department_id'}"/>
+                        <filter name="group_department_type" string="Betriebsbereich" context="{'group_by': 'department_type'}"/>
+                        <filter name="group_absent" string="Anwesenheit" context="{'group_by': 'is_absent'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Dashboard Action -->
+        <record id="action_hr_attendance_dashboard" model="ir.actions.act_window">
+            <field name="name">Anwesenheits-Dashboard</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,tree</field>
+            <field name="search_view_id" ref="hr_employee_dashboard_search"/>
+            <field name="context">{'search_default_present': 0}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Keine Mitarbeiter gefunden
+                </p>
+            </field>
+        </record>
+
+        <record id="action_hr_attendance_dashboard_view_kanban" model="ir.actions.act_window.view">
+            <field name="sequence">1</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="hr_employee_dashboard_kanban"/>
+            <field name="act_window_id" ref="action_hr_attendance_dashboard"/>
+        </record>
+
+        <record id="action_hr_attendance_dashboard_view_tree" model="ir.actions.act_window.view">
+            <field name="sequence">2</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_employee_dashboard_tree"/>
+            <field name="act_window_id" ref="action_hr_attendance_dashboard"/>
+        </record>
+
+        <!-- Menüeintrag für Dashboard -->
+        <menuitem id="menu_hr_attendance_dashboard"
+                  name="Anwesenheits-Dashboard"
+                  parent="hr.menu_hr_root"
+                  action="action_hr_attendance_dashboard"
+                  sequence="2"/>
+
+    </data>
+</odoo>

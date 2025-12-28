@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Erweiterung der Mitarbeiter-Formansicht für Kapazitätsplanung -->
+        <record id="view_employee_form_capacity" model="ir.ui.view">
+            <field name="name">hr.employee.view.form.capacity</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='hr_settings']" position="after">
+                    <page string="Arbeitszeitkonto" name="working_time_account">
+                        <group>
+                            <group string="Betriebsbereich">
+                                <field name="department_type"/>
+                                <field name="is_apprentice"/>
+                            </group>
+                            <group string="Arbeitszeiten">
+                                <field name="daily_target_hours" widget="float_time"/>
+                                <field name="actual_daily_hours" widget="float_time"/>
+                                <field name="weekly_overtime_generated" widget="float_time"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Überstundenkonto">
+                                <field name="overtime_balance" widget="float_time"/>
+                            </group>
+                            <group string="Urlaubskonto">
+                                <field name="vacation_days_total"/>
+                                <field name="vacation_days_taken"/>
+                                <field name="vacation_days_remaining"/>
+                            </group>
+                        </group>
+                        <group string="Erfolgsliste / Leistungskennzahlen">
+                            <group>
+                                <field name="assigned_hours_total" widget="float_time"/>
+                                <field name="completed_hours_total" widget="float_time"/>
+                            </group>
+                            <group>
+                                <field name="completion_rate" widget="progressbar"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Button für manuelle Urlaubseintragung -->
+        <record id="view_employee_form_leave_button" model="ir.ui.view">
+            <field name="name">hr.employee.view.form.leave.button</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_manual_leave_entry"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-calendar-plus-o"
+                            groups="hr_holidays.group_hr_holidays_user">
+                        <span>Urlaub eintragen</span>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Erweiterung der Listenansicht -->
+        <record id="view_employee_tree_capacity" model="ir.ui.view">
+            <field name="name">hr.employee.view.tree.capacity</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="department_type" optional="hide"/>
+                    <field name="overtime_balance" widget="float_time" optional="hide"/>
+                    <field name="vacation_days_remaining" optional="hide"/>
+                    <field name="completion_rate" widget="progressbar" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Erweiterung Abwesenheitstyp-Formular -->
+        <record id="view_leave_type_form_capacity" model="ir.ui.view">
+            <field name="name">hr.leave.type.view.form.capacity</field>
+            <field name="model">hr.leave.type</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='leave_validation']" position="after">
+                    <group string="Kapazitätsplanung (Grote)">
+                        <field name="is_school"/>
+                        <field name="capacity_hours" widget="float_time"/>
+                        <field name="deduct_from_overtime"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Erweiterung Abwesenheits-Formular -->
+        <record id="view_leave_form_capacity" model="ir.ui.view">
+            <field name="name">hr.leave.view.form.capacity</field>
+            <field name="model">hr.leave</field>
+            <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='number_of_days']" position="after">
+                    <field name="is_half_day" invisible="1"/>
+                    <field name="deducted_from_overtime" 
+                           widget="float_time"
+                           invisible="deducted_from_overtime == 0"/>
+                    <field name="overtime_added" 
+                           widget="float_time"
+                           invisible="overtime_added == 0"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

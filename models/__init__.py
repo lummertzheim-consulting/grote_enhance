@@ -12,3 +12,4 @@ from . import hr_employee_list
 from . import res_users
 from . import project_task_type
 from . import hr_leave
+from . import hr_capacity

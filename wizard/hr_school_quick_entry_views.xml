@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Wizard für Berufsschul-Schnelleintragung -->
+        <record id="hr_school_quick_entry_view_form" model="ir.ui.view">
+            <field name="name">hr.school.quick.entry.form</field>
+            <field name="model">hr.school.quick.entry</field>
+            <field name="arch" type="xml">
+                <form string="Berufsschul-Schnelleintragung">
+                    <group>
+                        <group string="Auszubildende">
+                            <field name="employee_ids" 
+                                   widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="Zeitraum">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+                    <group string="Schultage auswählen">
+                        <field name="school_dates" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="selected" widget="boolean_toggle"/>
+                                <field name="date"/>
+                                <field name="day_name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="action_create_school_leaves" 
+                                string="Abwesenheiten erstellen" 
+                                type="object" 
+                                class="btn-primary"/>
+                        <button string="Abbrechen" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action für Wizard -->
+        <record id="action_hr_school_quick_entry" model="ir.actions.act_window">
+            <field name="name">Berufsschul-Schnelleintragung</field>
+            <field name="res_model">hr.school.quick.entry</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Menüeintrag unter Abwesenheiten -->
+        <menuitem id="menu_hr_school_quick_entry"
+                  name="Berufsschul-Schnelleintragung"
+                  parent="hr_holidays.menu_hr_holidays_root"
+                  action="action_hr_school_quick_entry"
+                  sequence="30"
+                  groups="hr_holidays.group_hr_holidays_user"/>
+
+    </data>
+</odoo>
