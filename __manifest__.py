@@ -2,7 +2,7 @@
 
 {
     'name': 'Grote Enhance',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'author': 'Fletscher',
     'category': 'Extra tools',
     'summary': 'Sales Manufacturing and project model changes',
@@ -15,10 +15,14 @@
     - Berufsschul-Schnelleintragung für Auszubildende
     - Anwesenheits-Dashboard
     - Erfolgslisten für Mitarbeiter
+    
+    Integration mit ORS Import:
+    - Arbeitszeitmodelle werden aus ors_customer_import übernommen
+    - Geschäftsbereiche werden dynamisch geladen
     ''',
     'support': 'felix@fletscher.de',
     'website': 'https://www.fletscher.de',
-    'depends': ['base', 'web', 'mrp', 'sale_management', 'project', 'hr_timesheet', 'portal', 'documents', 'hr_holidays', 'hr_attendance'],
+    'depends': ['base', 'web', 'mrp', 'sale_management', 'project', 'hr_timesheet', 'portal', 'documents', 'hr_holidays', 'hr_attendance', 'ors_customer_import'],
     "data": [
         "security/ir.model.access.csv",
         "security/ir.model.security.xml",

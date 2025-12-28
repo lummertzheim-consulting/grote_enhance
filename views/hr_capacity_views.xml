@@ -10,7 +10,8 @@
                 <xpath expr="//page[@name='hr_settings']" position="after">
                     <page string="Arbeitszeitkonto" name="working_time_account">
                         <group>
-                            <group string="Betriebsbereich">
+                            <group string="Arbeitszeitmodell">
+                                <field name="work_time_model_id" options="{'no_create': True}"/>
                                 <field name="department_type"/>
                                 <field name="is_apprentice"/>
                             </group>

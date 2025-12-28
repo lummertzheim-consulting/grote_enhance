@@ -3,17 +3,57 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from datetime import date, datetime, timedelta
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class HrEmployeeCapacity(models.Model):
     """Erweiterung für Arbeitszeitkonto und Kapazitätsplanung"""
     _inherit = 'hr.employee'
 
-    # Betriebsbereich für unterschiedliche Arbeitszeitmodelle
-    department_type = fields.Selection([
-        ('maschinenbau', 'Maschinenbau (39 Std/Woche)'),
-        ('kleingeraete', 'Kleingeräte (38,75 Std/Woche)'),
-    ], string='Betriebsbereich', default='kleingeraete')
+    # Verknüpfung zum Arbeitszeitmodell aus ors_customer_import
+    work_time_model_id = fields.Many2one(
+        'ors.work.time.model',
+        string='Arbeitszeitmodell',
+        help='Arbeitszeitmodell aus dem ORS Import Modul'
+    )
+
+    # Betriebsbereich - wird aus work_time_model_id übernommen oder manuell gesetzt
+    department_type = fields.Selection(
+        selection='_get_department_type_selection',
+        string='Betriebsbereich',
+        compute='_compute_department_type',
+        store=True,
+        readonly=False
+    )
+
+    @api.model
+    def _get_department_type_selection(self):
+        """Holt die Arbeitszeitmodelle aus ors_customer_import als Selection"""
+        try:
+            # Prüfe ob das Modell existiert
+            if 'ors.work.time.model' in self.env:
+                models = self.env['ors.work.time.model'].search([('active', '=', True)])
+                if models:
+                    return [(m.code, m.name) for m in models]
+        except Exception as e:
+            _logger.warning("Konnte Arbeitszeitmodelle nicht laden: %s", e)
+        
+        # Fallback wenn ors_customer_import nicht installiert ist
+        return [
+            ('maschinenbau', 'Maschinenbau (39 Std/Woche)'),
+            ('kleingeraete', 'Kleingeräte (38,75 Std/Woche)'),
+        ]
+
+    @api.depends('work_time_model_id', 'work_time_model_id.code')
+    def _compute_department_type(self):
+        """Setzt department_type basierend auf work_time_model_id"""
+        for employee in self:
+            if employee.work_time_model_id:
+                employee.department_type = employee.work_time_model_id.code
+            elif not employee.department_type:
+                employee.department_type = 'kleingeraete'
 
     # Arbeitszeitkonto
     overtime_balance = fields.Float(
@@ -24,19 +64,41 @@ class HrEmployeeCapacity(models.Model):
     )
     daily_target_hours = fields.Float(
         string='Tägliche Soll-Stunden',
+        compute='_compute_from_work_time_model',
+        store=True,
+        readonly=False,
         default=7.75,
         help='Standard: 7,75 Stunden (7:45) für Kapazitätsplanung'
     )
     actual_daily_hours = fields.Float(
         string='Tatsächliche Tagesarbeitszeit',
+        compute='_compute_from_work_time_model',
+        store=True,
+        readonly=False,
         default=8.5,
         help='Maschinenbau: 8,5 Std. (Mo-Do), Freitag 5 Std.'
     )
     weekly_overtime_generated = fields.Float(
         string='Wöchentliche Überstunden',
         compute='_compute_weekly_overtime',
+        store=True,
         help='Automatische Überstunden durch Arbeitszeitmodell (z.B. 0,25 Std. bei 39 Std./Woche)'
     )
+
+    @api.depends('work_time_model_id', 'work_time_model_id.daily_target_hours',
+                 'work_time_model_id.monday_hours')
+    def _compute_from_work_time_model(self):
+        """Übernimmt Werte vom Arbeitszeitmodell"""
+        for employee in self:
+            if employee.work_time_model_id:
+                employee.daily_target_hours = employee.work_time_model_id.daily_target_hours
+                # Für actual_daily_hours nehmen wir den Montags-Wert als Referenz
+                employee.actual_daily_hours = employee.work_time_model_id.monday_hours
+            else:
+                if not employee.daily_target_hours:
+                    employee.daily_target_hours = 7.75
+                if not employee.actual_daily_hours:
+                    employee.actual_daily_hours = 8.5
 
     # Urlaubskonto
     vacation_days_total = fields.Float(
@@ -77,11 +139,14 @@ class HrEmployeeCapacity(models.Model):
         default=False
     )
 
-    @api.depends('department_type', 'target_work_hours_week')
+    @api.depends('work_time_model_id', 'work_time_model_id.weekly_overtime_generated',
+                 'department_type', 'target_work_hours_week')
     def _compute_weekly_overtime(self):
         """Berechnet wöchentliche Überstunden aus Arbeitszeitmodell"""
         for employee in self:
-            if employee.department_type == 'maschinenbau':
+            if employee.work_time_model_id:
+                employee.weekly_overtime_generated = employee.work_time_model_id.weekly_overtime_generated
+            elif employee.department_type == 'maschinenbau':
                 # 39 Std. Arbeitszeit, aber 38,75 Std. Soll = 0,25 Std. Überstunden/Woche
                 employee.weekly_overtime_generated = 0.25
             else:
