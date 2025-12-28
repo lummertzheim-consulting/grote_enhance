@@ -20,16 +20,16 @@
                     </group>
                     <group string="Schultage auswählen">
                         <field name="school_dates" nolabel="1">
-                            <tree editable="bottom">
+                            <list editable="bottom">
                                 <field name="selected" widget="boolean_toggle"/>
                                 <field name="date"/>
                                 <field name="day_name"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                     <footer>
-                        <button name="action_create_school_leaves" 
-                                string="Abwesenheiten erstellen" 
+                        <button name="action_create_school_leaves"
+                                string="Abwesenheiten erstellen"
                                 type="object" 
                                 class="btn-primary"/>
                         <button string="Abbrechen" class="btn-secondary" special="cancel"/>
@@ -53,6 +53,5 @@
                   action="action_hr_school_quick_entry"
                   sequence="30"
                   groups="hr_holidays.group_hr_holidays_user"/>
-
     </data>
 </odoo>

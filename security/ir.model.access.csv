@@ -3,3 +3,5 @@ access_task_employee_capacity,task.employee.capacity,model_task_employee_capacit
 access_hr_employee_portal,hr.employee.portal,hr.model_hr_employee,base.group_portal,1,0,0,0
 access_res_partner_portal,res.partner.portal,base.model_res_partner,base.group_portal,1,0,0,0
 access_hr_holidays_status_portal,hr.holidays.status.portal.user,hr_holidays.model_hr_leave_type,base.group_portal,1,0,0,0
+access_hr_school_quick_entry,hr.school.quick.entry,model_hr_school_quick_entry,hr_holidays.group_hr_holidays_user,1,1,1,1
+access_hr_school_quick_entry_line,hr.school.quick.entry.line,model_hr_school_quick_entry_line,hr_holidays.group_hr_holidays_user,1,1,1,1

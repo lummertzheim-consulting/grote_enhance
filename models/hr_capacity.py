@@ -176,14 +176,26 @@ class HrEmployeeCapacity(models.Model):
         if not self.resource_calendar_id:
             return 0.0
 
-        # Arbeitstage im Zeitraum berechnen
-        work_days = self.resource_calendar_id.get_work_days_count(
-            datetime.combine(year_start, datetime.min.time()),
-            datetime.combine(today, datetime.max.time()),
-            compute_leaves=True,
-            resource=self.resource_id
+        # Arbeitstage im Zeitraum berechnen - kompatibel mit Odoo 19
+        import pytz
+        tz = pytz.timezone(self.resource_calendar_id.tz or 'UTC')
+        from_datetime = tz.localize(datetime.combine(year_start, datetime.min.time()))
+        to_datetime = tz.localize(datetime.combine(today, datetime.max.time()))
+        
+        # Berechne Arbeitsstunden über die Intervalle
+        intervals = self.resource_calendar_id._work_intervals_batch(
+            from_datetime, 
+            to_datetime,
+            resources=self.resource_id,
+            tz=tz
         )
-        return work_days * self.daily_target_hours
+        
+        total_work_hours = 0.0
+        resource_intervals = intervals.get(self.resource_id.id, [])
+        for start, end, meta in resource_intervals:
+            total_work_hours += (end - start).total_seconds() / 3600.0
+        
+        return total_work_hours
 
     def _compute_vacation_days(self):
         """Berechnet genommene und verbleibende Urlaubstage"""

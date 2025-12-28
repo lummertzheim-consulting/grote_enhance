@@ -68,7 +68,7 @@
             <field name="name">hr.employee.dashboard.tree</field>
             <field name="model">hr.employee</field>
             <field name="arch" type="xml">
-                <tree decoration-danger="is_absent == True" decoration-success="is_absent == False">
+                <list decoration-danger="is_absent == True" decoration-success="is_absent == False">
                     <field name="name"/>
                     <field name="job_title"/>
                     <field name="department_id"/>
@@ -78,7 +78,7 @@
                     <field name="overtime_balance" widget="float_time"/>
                     <field name="vacation_days_remaining"/>
                     <field name="completion_rate" widget="progressbar"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -98,11 +98,10 @@
                     <filter name="kleingeraete" string="Kleingeräte" domain="[('department_type', '=', 'kleingeraete')]"/>
                     <separator/>
                     <filter name="apprentices" string="Auszubildende" domain="[('is_apprentice', '=', True)]"/>
-                    <group expand="0" string="Gruppieren nach">
-                        <filter name="group_department" string="Abteilung" context="{'group_by': 'department_id'}"/>
-                        <filter name="group_department_type" string="Betriebsbereich" context="{'group_by': 'department_type'}"/>
-                        <filter name="group_absent" string="Anwesenheit" context="{'group_by': 'is_absent'}"/>
-                    </group>
+                    <separator/>
+                    <filter name="group_department" string="Abteilung" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_department_type" string="Betriebsbereich" context="{'group_by': 'department_type'}"/>
+                    <filter name="group_absent" string="Anwesenheit" context="{'group_by': 'is_absent'}"/>
                 </search>
             </field>
         </record>
@@ -111,7 +110,7 @@
         <record id="action_hr_attendance_dashboard" model="ir.actions.act_window">
             <field name="name">Anwesenheits-Dashboard</field>
             <field name="res_model">hr.employee</field>
-            <field name="view_mode">kanban,tree</field>
+            <field name="view_mode">kanban,list</field>
             <field name="search_view_id" ref="hr_employee_dashboard_search"/>
             <field name="context">{'search_default_present': 0}</field>
             <field name="help" type="html">
@@ -130,7 +129,7 @@
 
         <record id="action_hr_attendance_dashboard_view_tree" model="ir.actions.act_window.view">
             <field name="sequence">2</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">list</field>
             <field name="view_id" ref="hr_employee_dashboard_tree"/>
             <field name="act_window_id" ref="action_hr_attendance_dashboard"/>
         </record>
