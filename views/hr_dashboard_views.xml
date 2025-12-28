@@ -18,15 +18,14 @@
                     <field name="department_type"/>
                     <field name="overtime_balance"/>
                     <field name="vacation_days_remaining"/>
+                    <field name="avatar_128"/>
                     <templates>
                         <t t-name="card">
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click #{record.is_absent.raw_value ? 'o_employee_absent border-danger' : 'o_employee_present border-success'}">
-                                <div class="o_kanban_image">
-                                    <img t-att-src="kanban_image('hr.employee', 'avatar_128', record.id.raw_value)" 
-                                         alt="Mitarbeiterbild" 
-                                         class="o_image_64_cover"/>
-                                </div>
-                                <div class="oe_kanban_details">
+                                <aside>
+                                    <field name="avatar_128" widget="image" class="o_image_64_cover"/>
+                                </aside>
+                                <main>
                                     <div class="o_kanban_record_title">
                                         <strong><field name="name"/></strong>
                                     </div>
@@ -45,17 +44,17 @@
                                     <div t-else="" class="text-success mt-2">
                                         <i class="fa fa-check-circle"/> Anwesend
                                     </div>
-                                    <div class="mt-2 small">
-                                        <span class="badge bg-info me-1">
+                                    <footer class="mt-2 small">
+                                        <span class="badge text-bg-info me-1">
                                             <i class="fa fa-clock-o"/> 
-                                            Überstunden: <field name="overtime_balance" widget="float_time"/>
+                                            <field name="overtime_balance" widget="float_time"/>
                                         </span>
-                                        <span class="badge bg-warning">
+                                        <span class="badge text-bg-warning">
                                             <i class="fa fa-calendar"/> 
-                                            Urlaub: <field name="vacation_days_remaining"/> Tage
+                                            <field name="vacation_days_remaining"/> Tage
                                         </span>
-                                    </div>
-                                </div>
+                                    </footer>
+                                </main>
                             </div>
                         </t>
                     </templates>
