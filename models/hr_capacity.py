@@ -107,13 +107,11 @@ class HrEmployeeCapacity(models.Model):
     )
     vacation_days_taken = fields.Float(
         string='Urlaubstage genommen',
-        compute='_compute_vacation_days',
-        store=True
+        compute='_compute_vacation_days'
     )
     vacation_days_remaining = fields.Float(
         string='Urlaubstage verbleibend',
-        compute='_compute_vacation_days',
-        store=True
+        compute='_compute_vacation_days'
     )
 
     # Erfolgsliste / Leistungskonto
@@ -187,7 +185,6 @@ class HrEmployeeCapacity(models.Model):
         )
         return work_days * self.daily_target_hours
 
-    @api.depends('leave_ids', 'leave_ids.state', 'leave_ids.number_of_days')
     def _compute_vacation_days(self):
         """Berechnet genommene und verbleibende Urlaubstage"""
         for employee in self:
