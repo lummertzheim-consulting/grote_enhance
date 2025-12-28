@@ -278,11 +278,11 @@ class HrEmployeeCapacity(models.Model):
             ('user_ids', 'in', [employee.user_id.id]),
             '|',
             '&', ('date_deadline', '>=', week_start), ('date_deadline', '<=', week_end),
-            '&', ('planned_date_begin', '>=', week_start), ('planned_date_begin', '<=', week_end),
+            '&', ('date_deadline', '>=', week_start), ('date_deadline', '<=', week_end),
         ])
         
-        # Geplante Stunden summieren
-        planned_hours = sum(tasks.mapped('planned_hours'))
+        # Geplante Stunden summieren (allocated_hours in Odoo 19)
+        planned_hours = sum(tasks.mapped('allocated_hours'))
         
         # Falls keine geplanten Stunden, Durchschnitt schätzen
         if planned_hours == 0 and tasks:
